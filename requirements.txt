@@ -1,0 +1,6 @@
+streamlit
+pymongo
+pyjwt
+bcrypt
+streamlit-cookies-controller
+faker
