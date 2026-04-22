@@ -1,0 +1,282 @@
+===== PAGE 1 =====
+DBMS Mini Project Report | AI-Based Clinical Decision Support System | AY 2025–2026
+DEPARTMENT OF COMPUTER SCIENCE & ENGINEERING
+Academic Year 2025–2026 | Winter Semester | DBMS Mini Project
+PROJECT REPORT
+Module 42 | Category G
+Secure Clinical Summary View Generator
+[ Secure EHR & Access Control Systems ]
+Course Database Management Systems (DBMS)
+Course Coordinator Prof. ACS Rao
+Group Members [Name 1] | [Name 2] | [Name 3]
+Roll Numbers [Roll No. 1] | [Roll No. 2] | [Roll No. 3]
+Date of Submission [DD/MM/YYYY]
+1. Introduction & Problem Statement
+1.1 Objective
+Create a set of SQL views that generate role-appropriate clinical summaries, hiding sensitive
+columns based on access level. The system is implemented using core DBMS concepts: SQL
+DDL/DML, views, triggers, stored procedures, and rule-based SQL logic only — no machine
+learning is required.
+1.2 Module Context
+Module Number 42
+Module Title Secure Clinical Summary View Generator
+Category Category G – Secure EHR & Access Control Systems
+Key Entities Patient, EHRRecord, UserRole, ClinicalSummary
+DBMS Concepts DDL, DML, Constraints, Queries, Triggers, Procedures, Views,
+Normalization
+1.3 Scope & Limitations
+• Scope: 5 core tables with clinical data relevant to Secure EHR & Access Control Systems.
+• The system uses SQL-only rule-based logic; no ML or external APIs are required.
+• Data used is synthetic/sample clinical data; no real patient PII is included.
+• Scope is limited to secure ehr & access control systems as defined by the course
+allotment.
+Project Report Template | Dept. of CSEPage
+===== PAGE 2 =====
+DBMS Mini Project Report | AI-Based Clinical Decision Support System | AY 2025–2026
+2. Entity-Relationship (ER) Design
+2.1 ER Diagram
+[ ER Diagram — Insert Here. Show entities, attributes (underlined PKs), and relationships with
+cardinality. ]
+2.2 Entities & Attributes
+Entity Key Attributes Primary Key
+Patient [List 3–5 attributes] [PK Name]
+EHRRecord [List 3–5 attributes] [PK Name]
+UserRole [List 3–5 attributes] [PK Name]
+ClinicalSummary [List 3–5 attributes] [PK Name]
+2.3 Relationships
+Relationship Between Entities Cardinality Participation
+[Relationship 1] Patient ↔ EHRRecord 1 : N Total / Partial
+[Relationship 2] EHRRecord ↔ M : N Partial
+UserRole
+[Relationship 3] Patient ↔ UserRole 1 : 1 Total
+[Add more] [Entities]
+3. Database Schema (Normalized to 3NF)
+3.1 Tables Overview
+Table Name Description Primary Key Foreign Keys
+Patient [Describe purpose] [Primary Key] [Relationships]
+EHRRecord [Describe purpose] [Primary Key] [Relationships]
+Diagnosis [Describe purpose] [Primary Key] [Relationships]
+LabResult [Describe purpose] [Primary Key] [Relationships]
+UserRole [Describe purpose] [Primary Key] [Relationships]
+Project Report Template | Dept. of CSEPage
+===== PAGE 3 =====
+DBMS Mini Project Report | AI-Based Clinical Decision Support System | AY 2025–2026
+3.2 Table Schema Details
+[For each table below, fill in column details. Repeat the pattern for all 5 tables.]
+Table 1: Patient
+Column Name Data Type Constraints Description
+[col_id] INT PRIMARY KEY, [Unique row identifier]
+AUTO_INCREMENT
+[col_2] VARCHAR(100 NOT NULL [Describe column]
+)
+[col_3] [DataType] [Constraints] [Describe column]
+[col_fk] INT FOREIGN KEY → [Ref] [Foreign key column]
+Table 2: EHRRecord
+Column Name Data Type Constraints Description
+[col_id] INT PRIMARY KEY, [Unique row identifier]
+AUTO_INCREMENT
+[col_2] VARCHAR(100 NOT NULL [Describe column]
+)
+[col_3] [DataType] [Constraints] [Describe column]
+[col_fk] INT FOREIGN KEY → [Ref] [Foreign key column]
+Table 3: Diagnosis
+Column Name Data Type Constraints Description
+[col_id] INT PRIMARY KEY, [Unique row identifier]
+AUTO_INCREMENT
+[col_2] VARCHAR(100 NOT NULL [Describe column]
+)
+[col_3] [DataType] [Constraints] [Describe column]
+[col_fk] INT FOREIGN KEY → [Ref] [Foreign key column]
+Table 4: LabResult
+Column Name Data Type Constraints Description
+[col_id] INT PRIMARY KEY, [Unique row identifier]
+AUTO_INCREMENT
+[col_2] VARCHAR(100 NOT NULL [Describe column]
+)
+[col_3] [DataType] [Constraints] [Describe column]
+[col_fk] INT FOREIGN KEY → [Ref] [Foreign key column]
+Project Report Template | Dept. of CSEPage
+===== PAGE 4 =====
+DBMS Mini Project Report | AI-Based Clinical Decision Support System | AY 2025–2026
+Table 5: UserRole
+Column Name Data Type Constraints Description
+[col_id] INT PRIMARY KEY, [Unique row identifier]
+AUTO_INCREMENT
+[col_2] VARCHAR(100 NOT NULL [Describe column]
+)
+[col_3] [DataType] [Constraints] [Describe column]
+[col_fk] INT FOREIGN KEY → [Ref] [Foreign key column]
+4. SQL Scripts
+4.1 DDL – Data Definition Language
+-- DDL for Secure Clinical Summary View GeneratorCREATE DATABASE IF NOT EXISTS
+secure_clinical_summary_view_generator_db;USE
+secure_clinical_summary_view_generator_db;-- Table 1: PatientCREATE TABLE Patient
+( [col_id] INT PRIMARY KEY AUTO_INCREMENT, [col_name] VARCHAR(100) NOT
+NULL, -- [Add more columns] created_at TIMESTAMP DEFAULT
+CURRENT_TIMESTAMP);-- [Add CREATE TABLE statements for remaining 4 tables]
+4.2 DML – Sample Data
+-- Sample INSERT for PatientINSERT INTO Patient ([col_name])VALUES ('Sample
+Value 1'), ('Sample Value 2'), ('Sample Value 3');-- [Add INSERT statements
+for all tables with at least 10 realistic clinical records each]
+4.3 Constraints Summary
+Constraint Table Column Rule
+PRIMARY KEY Patient [PK col] Unique identifier
+FOREIGN KEY EHRRecord [FK col] References Patient([PK])
+NOT NULL Patient [col] Required field
+CHECK [Table] [col] [Condition]
+UNIQUE [Table] [col] No duplicates
+DEFAULT [Table] [col] [Default value]
+5. SQL Queries & Sample Outputs
+5.1 Query Catalogue
+Query ID Description SQL Features
+Project Report Template | Dept. of CSEPage
+===== PAGE 5 =====
+DBMS Mini Project Report | AI-Based Clinical Decision Support System | AY 2025–2026
+Q-01 View (Doctor): full clinical summary with diagnosis + [SELECT / JOIN /
+labs WHERE / GROUP BY
+etc.]
+Q-02 View (Nurse): vitals + medication only [SELECT / JOIN /
+WHERE / GROUP BY
+etc.]
+Q-03 View (Admin): demographics + billing — no clinical [SELECT / JOIN /
+data WHERE / GROUP BY
+etc.]
+Q-04 Procedure: return appropriate view based on role input [SELECT / JOIN /
+WHERE / GROUP BY
+etc.]
+Q-05 [Add complex clinical query specific to this module] Nested Subquery /
+CASE WHEN
+5.2 Query Details
+Query Q-01: View (Doctor): full clinical summary with diagnosis + labs
+-- Q-01: View (Doctor): full clinical summary with diagnosis + labsSELECT
+[columns]FROM [table(s)]WHERE [condition][ORDER BY / GROUP BY / HAVING as
+needed];
+Expected Output:
+[Col1] [Col2] [Col3]
+[Sample] [Sample] [Sample]
+[Sample] [Sample] [Sample]
+Query Q-02: View (Nurse): vitals + medication only
+-- Q-02: View (Nurse): vitals + medication onlySELECT [columns]FROM
+[table(s)]WHERE [condition][ORDER BY / GROUP BY / HAVING as needed];
+Expected Output:
+[Col1] [Col2] [Col3]
+[Sample] [Sample] [Sample]
+[Sample] [Sample] [Sample]
+Query Q-03: View (Admin): demographics + billing — no clinical data
+-- Q-03: View (Admin): demographics + billing — no clinical dataSELECT
+[columns]FROM [table(s)]WHERE [condition][ORDER BY / GROUP BY / HAVING as
+needed];
+Expected Output:
+[Col1] [Col2] [Col3]
+[Sample] [Sample] [Sample]
+[Sample] [Sample] [Sample]
+Project Report Template | Dept. of CSEPage
+===== PAGE 6 =====
+DBMS Mini Project Report | AI-Based Clinical Decision Support System | AY 2025–2026
+Query Q-04: Procedure: return appropriate view based on role input
+-- Q-04: Procedure: return appropriate view based on role inputSELECT
+[columns]FROM [table(s)]WHERE [condition][ORDER BY / GROUP BY / HAVING as
+needed];
+Expected Output:
+[Col1] [Col2] [Col3]
+[Sample] [Sample] [Sample]
+[Sample] [Sample] [Sample]
+6. Triggers, Stored Procedures & Views
+6.1 Trigger T-01
+Purpose: [Describe the clinical condition this trigger monitors and the automatic action taken.]
+DELIMITER //CREATE TRIGGER [trigger_name_01] AFTER INSERT ON [table_name]
+FOR EACH ROWBEGIN IF NEW.[column] [condition] THEN INSERT INTO
+[AlertTable] ([col1], [col2]) VALUES (NEW.[col], '[Alert Message]');
+END IF;END //DELIMITER ;
+6.2 Trigger T-02
+Purpose: [Describe a second trigger relevant to this module, e.g., audit logging, cascade update.]
+DELIMITER //CREATE TRIGGER [trigger_name_02] BEFORE UPDATE ON [table_name]
+FOR EACH ROWBEGIN -- Trigger logic INSERT INTO AuditLog (table_name,
+old_value, new_value, changed_at) VALUES ('[table_name]', OLD.[col],
+NEW.[col], NOW());END //DELIMITER ;
+6.3 Stored Procedure P-01
+Purpose: [Describe the clinical workflow or rule logic automated by this procedure.]
+DELIMITER //CREATE PROCEDURE [procedure_name]( IN p_input [DataType], OUT
+p_result [DataType])BEGIN SELECT [column] INTO p_result FROM [table]
+WHERE [condition] = p_input;END //DELIMITER ;-- Sample Call:-- CALL
+[procedure_name]([input_value], @result_var);-- SELECT @result_var;
+6.4 View V-01
+Purpose: [Describe what abstracted/simplified clinical view this provides.]
+CREATE VIEW [view_name] AS SELECT p.[col1], p.[col2], d.[col3], l.[col4]
+FROM [Table1] p JOIN [Table2] d ON p.[fk] = d.[pk] LEFT JOIN [Table3] l
+ON p.[fk] = l.[pk] WHERE [condition];
+6.5 View V-02
+Purpose: [Describe a second view, e.g., role-restricted view, statistical summary view.]
+CREATE VIEW [view_name_2] AS SELECT [columns], COUNT(*) AS record_count
+FROM [table] GROUP BY [grouping_column] ORDER BY record_count DESC;
+Project Report Template | Dept. of CSEPage
+===== PAGE 7 =====
+DBMS Mini Project Report | AI-Based Clinical Decision Support System | AY 2025–2026
+7. Testing & Validation
+7.1 Test Cases
+TC ID Test Description Operation Expected Result Status
+TC-01 Insert valid Patient INSERT Record added Pass /
+successfully Fail
+TC-02 Insert duplicate primary INSERT Error: Duplicate entry Pass /
+key Fail
+TC-03 Delete record with FK DELETE FK constraint violation Pass /
+dependencies error Fail
+TC-04 Query: View (Doctor): full SELECT Expected rows returned Pass /
+clinical summary with correctly Fail
+diagnosis + labs
+TC-05 Trigger fires on INSERT Alert/log record Pass /
+threshold/condition (trigger) auto-created Fail
+breach
+TC-06 View returns correct SELECT (view) Correct filtered data Pass /
+abstracted data shown Fail
+TC-07 Stored procedure CALL Correct OUT parameter Pass /
+executes with correct procedure value Fail
+output
+TC-08 [Module-specific test Pass /
+case] Fail
+7.2 Sample Output Screenshots
+[ Screenshot 1 – Query Execution & Result — Insert Here ]
+[ Screenshot 2 – Trigger / Procedure Output — Insert Here ]
+[ Screenshot 3 – View Output — Insert Here ]
+8. Conclusion & Future Work
+8.1 Summary
+This project successfully implemented the "Secure Clinical Summary View Generator" module of
+the AI-Based Clinical Decision Support System. A normalized relational database (3NF) was
+designed with 5 tables, complete DDL/DML scripts, SQL queries for clinical decision support,
+triggers for automated alerts, stored procedures for rule-based logic, and views for data
+abstraction.
+8.2 DBMS Concepts Demonstrated
+• ER Modeling & Relational Schema Design
+Project Report Template | Dept. of CSEPage
+===== PAGE 8 =====
+DBMS Mini Project Report | AI-Based Clinical Decision Support System | AY 2025–2026
+• Normalization up to 3NF
+• DDL: CREATE TABLE with PK, FK, NOT NULL, CHECK, UNIQUE, DEFAULT constraints
+• DML: INSERT, UPDATE, DELETE with realistic clinical sample data
+• Complex SQL Queries: JOINs, Subqueries, Aggregates, CASE WHEN, GROUP BY
+• Triggers for automated clinical alerts and audit logging
+• Stored Procedures for rule-based clinical logic
+• Views for data abstraction and role-appropriate access
+8.3 Future Enhancements
+• Integration with a web-based clinical dashboard for real-time use.
+• Extension to adjacent modules (e.g., linking to Drug Safety or Lab modules).
+• Adding indexes for performance optimization on large-scale clinical data.
+• [Module-specific future enhancement]
+8.4 Group Contribution
+Member Name Roll Number Contribution
+[Name 1] [Roll No.] [Schema Design, DDL, ER Diagram]
+[Name 2] [Roll No.] [DML, Queries, Testing]
+[Name 3] [Roll No.] [Triggers, Procedures, Views, Report]
+9. References
+1. Silberschatz, A., Korth, H. F., & Sudarshan, S. (2019). Database System Concepts (7th ed.).
+McGraw-Hill.
+2. Ramakrishnan, R., & Gehrke, J. (2003). Database Management Systems (3rd ed.).
+McGraw-Hill.
+3. Department of CSE – DBMS Course Notes, Academic Year 2025–2026.
+4. Project Allotment Document – Prof. ACS Rao, Dept. of CSE, 2025.
+5. MySQL 8.0 Reference Manual – https://dev.mysql.com/doc/
+6. [Add any clinical domain reference relevant to this module]
+DEPARTMENT OF COMPUTER SCIENCE & ENGINEERING
+Academic Year 2025–2026 | Winter Semester | DBMS Mini Project
+PROJECT REPORT
+Project Report Template | Dept. of CSEPage

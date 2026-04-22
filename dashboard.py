@@ -1,4 +1,5 @@
 import datetime
+from datetime import timezone
 import streamlit as st
 from auth import remove_auth_cookie
 
@@ -23,7 +24,7 @@ def render_dashboard(payload: dict):
     # ── Session countdown
     exp_ts = payload.get("exp")
     if exp_ts:
-        remaining = datetime.datetime.utcfromtimestamp(exp_ts) - datetime.datetime.utcnow()
+        remaining = datetime.datetime.fromtimestamp(exp_ts, tz=timezone.utc) - datetime.datetime.now(timezone.utc)
         h = max(int(remaining.total_seconds() // 3600), 0)
         m = max(int((remaining.total_seconds() % 3600) // 60), 0)
         session_text = f"{h}h {m}m"

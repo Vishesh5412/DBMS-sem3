@@ -62,7 +62,7 @@ st.markdown(
     header[data-testid="stHeader"] { 
         background: transparent !important;
     }
-    .stAppDeployButton, [data-testid="stToolbar"] { display: none !important; }
+    .stAppDeployButton { display: none !important; }
 
     /* ── Native Streamlit Headers ── */
     header[data-testid="stHeader"] { 
@@ -391,63 +391,16 @@ st.markdown(
 
 import streamlit.components.v1 as components
 
-# Silent Validation & Persistent Hamburger Injector
+# Disable browser autocomplete on inputs
 components.html(
     """
     <script>
-    const targetNode = window.parent.document.body;
-    
-    // 1. Disable Auto-Suggestions & Tooltips
-    const observer = new MutationObserver(function(mutationsList, observer) {
+    const observer = new MutationObserver(function() {
         const doc = window.parent.document;
         doc.querySelectorAll('input').forEach(i => i.setAttribute('autocomplete', 'off'));
         doc.querySelectorAll('form').forEach(f => f.setAttribute('novalidate', 'true'));
     });
-    observer.observe(targetNode, { childList: true, subtree: true });
-
-    // 2. Inject Bullet-Proof Custom Hamburger Toggle
-    if (!window.parent.document.getElementById("custom-hamburger-btn")) {
-        const btn = window.parent.document.createElement("div");
-        btn.id = "custom-hamburger-btn";
-        btn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#07090f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>`;
-        btn.style.cssText = "position: fixed; top: 15px; left: 20px; width: 45px; height: 45px; background: #38cdaa; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 9999999; box-shadow: 0 4px 15px rgba(56,205,170,0.3); transition: transform 0.2s ease;";
-        
-        btn.onmouseover = () => btn.style.transform = "scale(1.05)";
-        btn.onmouseout = () => btn.style.transform = "scale(1)";
-        
-        btn.onclick = () => {
-            const expandBtn = window.parent.document.querySelector('[data-testid="collapsedControl"]');
-            const collapseBtn = window.parent.document.querySelector('[data-testid="stSidebarCollapseButton"]');
-            const altCollapse = window.parent.document.querySelector('[data-testid="baseButton-headerNoPadding"]');
-            
-            // Execute React click event to natively toggle Streamlit states
-            if (expandBtn && window.parent.getComputedStyle(expandBtn).display !== 'none') {
-                expandBtn.click();
-            } else if (collapseBtn) {
-                collapseBtn.click();
-            } else if (altCollapse) {
-                altCollapse.click();
-            }
-        };
-        targetNode.appendChild(btn);
-    }
-    
-    // Hide Streamlit's native buttons safely so they don't visually duplicate,
-    // while keeping them actively rendering in the DOM so .click() evaluates properly.
-    const style = window.parent.document.createElement("style");
-    style.innerHTML = `
-        [data-testid="collapsedControl"], 
-        [data-testid="stSidebarCollapseButton"], 
-        [data-testid="baseButton-headerNoPadding"] { 
-            opacity: 0 !important; 
-            position: absolute !important;
-            width: 1px !important;
-            height: 1px !important;
-            overflow: hidden !important;
-            z-index: -10 !important;
-        }
-    `;
-    window.parent.document.head.appendChild(style);
+    observer.observe(window.parent.document.body, { childList: true, subtree: true });
     </script>
     """,
     height=0,
