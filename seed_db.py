@@ -20,6 +20,7 @@ PATIENTS = [
     {"patient_id": "P-10030-J", "patient_name": "Emily Watson",      "age": 66, "disease": "COPD",                  "medication": "Tiotropium Bromide 18mcg","billing_info": "Visa",       "contact_no": "503-334-7721", "isVerified": True},
 ]
 
+
 # ── Realistic clinical summaries per context ──────────────────────────────────
 CLINICAL_SUMMARIES = {
     "P-10021-A": [

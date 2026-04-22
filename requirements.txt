@@ -4,3 +4,4 @@ pyjwt
 bcrypt
 streamlit-cookies-controller
 faker
+python-dotenv
