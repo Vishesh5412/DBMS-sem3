@@ -22,7 +22,7 @@ MEMBER_2_ROLL = "Enter Roll 2 Here"
 MEMBER_3_NAME = "Enter Name 3 Here"
 MEMBER_3_ROLL = "Enter Roll 3 Here"
 
-SUBMISSION_DATE = "24/04/2026"
+SUBMISSION_DATE = "24th April 2026"
 # =============================================================================
 
 doc = Document()
@@ -192,6 +192,9 @@ for item in [
     'The system uses SQL-only rule-based logic for data masking; no ML or external APIs are used.',
     'Anonymization rules are defined in a dedicated table and applied dynamically via SQL CASE WHEN expressions.',
     'Four user roles are supported: Clinical, Research, Administrative, and Legal — each receiving a filtered view.',
+    'Advanced Patient Filtering: Supports dynamic NoSQL/SQL querying ($in, $gte) for complex clinical searches.',
+    'Security Audit Heatmap: Tracks Role-Based actions (Searches, Exports) and visualizes them natively.',
+    '1-Click PDF Export: Clinical and Legal subpoenas can be downloaded as formatted PDF documents directly from the UI.',
     'Data used is synthetic/sample clinical data; no real patient PII is included.',
     'Scope is limited to secure clinical summary generation and role-based access control as defined in the course allotment.',
 ]:
@@ -783,14 +786,10 @@ add_table(
 )
 
 heading('7.2 Sample Output Screenshots', 2)
-para('[ Screenshot 1 – Clinical Role: Patient Context View showing full name, disease, medication, '
-     'and EHR diagnosis notes for patient P-10022-B (Sarah Mitchell) ]', italic=True)
-para('[ Screenshot 2 – Research Role: Anonymized Dataset showing SHA-256 hashed IDs, age buckets '
-     '(e.g. 30-39), disease categories, and Disease Demographics chart ]', italic=True)
-para('[ Screenshot 3 – Trigger Output: AuditLog table auto-populated after ClinicalSummary insert '
-     'displaying role_id, patient_id, action=VIEW_SUMMARY, and logged_at timestamp ]', italic=True)
-para('[ Screenshot 4 – Stored Procedure: CALL GetSummaryByRole result showing filtered patient '
-     'data and @status = SUCCESS ]', italic=True)
+para('[ Screenshot 1 – Clinical Role: Patient Context View showing Advanced Search and 1-Click PDF Export for patient P-10022-B ]', italic=True)
+para('[ Screenshot 2 – Research Role: Anonymized Dataset showing SHA-256 hashed IDs, age buckets (e.g. 30-39) ]', italic=True)
+para('[ Screenshot 3 – Admin Role: Security Audit Heatmap displaying tracked Role actions ]', italic=True)
+para('[ Screenshot 4 – Legal Role: Subpoena Extraction with specific columns and PDF export capability ]', italic=True)
 
 page_break()
 
