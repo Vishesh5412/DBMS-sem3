@@ -1,6 +1,7 @@
 import streamlit as st
-from database import get_mongo_client
+from database import get_mongo_client, log_audit_event
 from bson.objectid import ObjectId
+import pdf_utils
 
 def get_patients_collection():
     return get_mongo_client()["clinical_db"]["patients"]
@@ -14,65 +15,83 @@ def view_patient_context():
     patients_coll = get_patients_collection()
     summaries_coll = get_summaries_collection()
 
-    st.markdown("### Real-time Patient Lookup")
-    entered_patient_id = st.text_input("Enter Patient ID (e.g., P-12345-X)")
+    tab1, tab2 = st.tabs(["Lookup by ID", "Advanced Search"])
 
-    if entered_patient_id:
-        # Prevent data leakage by explicitly selecting safe columns at the DB level
-        patient_projection = {
-            "_id": 0,
-            "patient_name": 1,
-            "age": 1,
-            "disease": 1,
-            "medication": 1,
-            "patient_id": 1  # Required for summaries link mapped earlier
-        }
-        
-        # Querying securely using native MongoDB via entered Patient ID in real-time
-        patient = patients_coll.find_one({"patient_id": entered_patient_id}, patient_projection)
-        
-        if patient:
-            st.subheader("Patient Information")
+    with tab1:
+        st.markdown("### Real-time Patient Lookup")
+        entered_patient_id = st.text_input("Enter Patient ID (e.g., P-12345-X)")
+
+        if entered_patient_id:
+            # Audit log
+            log_audit_event(st.session_state.user["username"], "Clinical", "Searched Patient", entered_patient_id)
             
-            st.markdown(f"**Name:** {patient.get('patient_name', 'N/A')}")
-            st.markdown(f"**Age:** {patient.get('age', 'N/A')}")
-            st.markdown(f"**Disease:** {patient.get('disease', 'N/A')}")
-            st.markdown(f"**Medication:** {patient.get('medication', 'N/A')}")
-                
-            st.markdown("---")
-            st.subheader("Clinical Summaries")
-            
-            # Strict Context Filtering & Projection
-            summary_projection = {
-                "_id": 0,
-                "Content_Data": 1,
-                "Purpose_Name": 1,
-                "Generated_Timestamp": 1
+            patient_projection = {
+                "_id": 0, "patient_name": 1, "age": 1, "disease": 1, "medication": 1, "patient_id": 1
             }
+            patient = patients_coll.find_one({"patient_id": entered_patient_id}, patient_projection)
             
-            selected_patient_string_id = patient.get("patient_id")
-            
-            clinical_summaries = list(summaries_coll.find({
-                "Patient_ID": selected_patient_string_id,
-                "Context_Type": "Clinical"
-            }, summary_projection))
-            
-            # Display Summaries
-            if clinical_summaries:
-                for summary in clinical_summaries:
-                    purpose = summary.get("Purpose_Name", "General")
-                    timestamp = summary.get("Generated_Timestamp")
+            if patient:
+                st.subheader("Patient Information")
+                st.markdown(f"**Name:** {patient.get('patient_name', 'N/A')}")
+                st.markdown(f"**Age:** {patient.get('age', 'N/A')}")
+                st.markdown(f"**Disease:** {patient.get('disease', 'N/A')}")
+                st.markdown(f"**Medication:** {patient.get('medication', 'N/A')}")
                     
-                    title = f"Summary: {purpose}"
-                    if timestamp:
-                        title += f" ({timestamp})"
+                st.markdown("---")
+                st.subheader("Clinical Summaries")
+                
+                clinical_summaries = list(summaries_coll.find({
+                    "Patient_ID": patient.get("patient_id"),
+                    "Context_Type": "Clinical"
+                }, {"_id": 0, "Content_Data": 1, "Purpose_Name": 1, "Generated_Timestamp": 1}))
+                
+                if clinical_summaries:
+                    for idx, summary in enumerate(clinical_summaries):
+                        purpose = summary.get("Purpose_Name", "General")
+                        timestamp = summary.get("Generated_Timestamp", "")
+                        content = summary.get("Content_Data", "No content available.")
                         
-                    with st.expander(title, expanded=True):
-                        st.markdown(summary.get("Content_Data", "No content available."))
+                        title = f"Summary: {purpose} ({timestamp})" if timestamp else f"Summary: {purpose}"
+                        with st.expander(title, expanded=True):
+                            st.markdown(content)
+                            pdf_bytes = pdf_utils.generate_pdf(patient.get("patient_id"), purpose, content)
+                            st.download_button(
+                                label="📥 Export as PDF",
+                                data=pdf_bytes,
+                                file_name=f"clinical_summary_{patient.get('patient_id')}_{idx}.pdf",
+                                mime="application/pdf"
+                            )
+                else:
+                    st.info("No clinical summaries found for this patient.")
             else:
-                st.info("No clinical summaries found for this patient.")
-        else:
-            st.error(f"Patient record for ID '{entered_patient_id}' not found.")
+                st.error(f"Patient record for ID '{entered_patient_id}' not found.")
+
+    with tab2:
+        st.markdown("### Advanced Patient Filter")
+        st.markdown("Demonstrates complex NoSQL/SQL `WHERE` equivalents (`$in`, `$gte`, `$lte`).")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            all_diseases = patients_coll.distinct("disease")
+            selected_diseases = st.multiselect("Filter by Disease", all_diseases)
+        with col2:
+            min_age, max_age = st.slider("Filter by Age Range", 0, 100, (0, 100))
+            
+        if st.button("Run Complex Query"):
+            query = {"age": {"$gte": min_age, "$lte": max_age}}
+            if selected_diseases:
+                query["disease"] = {"$in": selected_diseases}
+                
+            results = list(patients_coll.find(query, {"_id": 0, "patient_name": 1, "patient_id": 1, "age": 1, "disease": 1, "medication": 1}))
+            
+            # Audit log general search
+            log_audit_event(st.session_state.user["username"], "Clinical", "Advanced Search", "Multiple")
+            
+            if results:
+                st.success(f"Found {len(results)} matching patients.")
+                st.dataframe(results, use_container_width=True)
+            else:
+                st.warning("No patients match these criteria.")
 
 def view_generate_summary():
     st.title("Generate Summary")

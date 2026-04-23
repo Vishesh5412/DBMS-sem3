@@ -170,7 +170,37 @@ def main():
 
     summaries_coll.insert_many(summaries)
 
-    print(f"\n[OK] Seeded {len(PATIENTS)} patients, {len(summaries)} realistic summaries, {len(users)} users.\n")
+    # ── Seed mock audit logs for heatmap ─────────────────────────────────────
+    print("Generating mock audit logs for presentation heatmap...")
+    audit_coll = db["audit_logs"]
+    audit_coll.delete_many({})
+    
+    import random
+    from datetime import timedelta
+    
+    audit_logs = []
+    actions = ["Searched Patient", "Viewed Summaries", "Generated Summary", "Exported PDF"]
+    for _ in range(85):
+        # random day in the last 7 days
+        days_ago = random.randint(0, 7)
+        mock_date = now_utc - timedelta(days=days_ago, hours=random.randint(0,23))
+        
+        mock_role = random.choice(roles)
+        mock_user = f"{mock_role.lower()}_user"
+        mock_action = random.choice(actions)
+        mock_patient = random.choice(PATIENTS)["patient_id"]
+        
+        audit_logs.append({
+            "timestamp": mock_date,
+            "username": mock_user,
+            "role": mock_role,
+            "action": mock_action,
+            "patient_id": mock_patient
+        })
+    
+    audit_coll.insert_many(audit_logs)
+
+    print(f"\n[OK] Seeded {len(PATIENTS)} patients, {len(summaries)} realistic summaries, {len(users)} users, {len(audit_logs)} audit logs.\n")
     print("-" * 55)
     print(f"{'Role':<16} | {'Username':<22} | {'Password'}")
     print("-" * 55)

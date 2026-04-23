@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 import bcrypt
 import uuid
 from database import get_mongo_client
@@ -12,9 +13,40 @@ def get_patients_collection():
 def get_summaries_collection():
     return get_mongo_client()["clinical_db"]["summaries"]
 
+def get_audit_logs_collection():
+    return get_mongo_client()["clinical_db"]["audit_logs"]
 
 def view_system_health():
     st.title("System Health & User Management")
+    
+    st.subheader("Security Audit Logs (Last 7 Days)")
+    audit_coll = get_audit_logs_collection()
+    
+    # Simple MongoDB Aggregation for the heatmap
+    pipeline = [
+        {"$group": {"_id": {"role": "$role", "action": "$action"}, "count": {"$sum": 1}}}
+    ]
+    audit_stats = list(audit_coll.aggregate(pipeline))
+    
+    if audit_stats:
+        # Convert to pandas dataframe for Streamlit charting
+        records = []
+        for stat in audit_stats:
+            records.append({
+                "Role": stat["_id"]["role"],
+                "Action": stat["_id"]["action"],
+                "Count": stat["count"]
+            })
+        df = pd.DataFrame(records)
+        if not df.empty:
+            # Pivot table for stacked bar chart
+            chart_data = df.pivot(index="Role", columns="Action", values="Count").fillna(0)
+            st.bar_chart(chart_data)
+    else:
+        st.info("No audit logs available.")
+        
+    st.markdown("---")
+    
     users_coll = get_users_collection()
     
     # Exclude password hashes securely

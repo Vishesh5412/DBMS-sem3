@@ -10,6 +10,21 @@ from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 import copy
 
+# =============================================================================
+# TEAM MEMBER DETAILS - Edit these before running the script!
+# =============================================================================
+MEMBER_1_NAME = "Enter Name 1 Here"
+MEMBER_1_ROLL = "Enter Roll 1 Here"
+
+MEMBER_2_NAME = "Enter Name 2 Here"
+MEMBER_2_ROLL = "Enter Roll 2 Here"
+
+MEMBER_3_NAME = "Enter Name 3 Here"
+MEMBER_3_ROLL = "Enter Roll 3 Here"
+
+SUBMISSION_DATE = "24/04/2026"
+# =============================================================================
+
 doc = Document()
 
 # ── Page margins ──────────────────────────────────────────────────────────────
@@ -134,9 +149,9 @@ add_table(
     [
         ['Course',            'Database Management Systems (DBMS)'],
         ['Course Coordinator','Prof. ACS Rao'],
-        ['Group Members',     '[Name 1]  |  [Name 2]  |  [Name 3]'],
-        ['Roll Numbers',      '[Roll No. 1]  |  [Roll No. 2]  |  [Roll No. 3]'],
-        ['Date of Submission','[DD/MM/YYYY]'],
+        ['Group Members',     f'{MEMBER_1_NAME}  |  {MEMBER_2_NAME}  |  {MEMBER_3_NAME}'],
+        ['Roll Numbers',      f'{MEMBER_1_ROLL}  |  {MEMBER_2_ROLL}  |  {MEMBER_3_ROLL}'],
+        ['Date of Submission', SUBMISSION_DATE],
     ],
     col_widths=[2.5, 4.0]
 )
@@ -830,9 +845,9 @@ heading('8.4 Group Contribution', 2)
 add_table(
     ['Member Name', 'Roll Number', 'Contribution'],
     [
-        ['[Name 1]', '[Roll No. 1]', 'Schema Design, ER Diagram, DDL Scripts, Normalization'],
-        ['[Name 2]', '[Roll No. 2]', 'DML Data Seeding, SQL Queries (Q-01 to Q-05), Testing'],
-        ['[Name 3]', '[Roll No. 3]', 'Triggers, Stored Procedures, Views, Streamlit Frontend, Report'],
+        [MEMBER_1_NAME, MEMBER_1_ROLL, 'Database Schema Design, ER Diagram, DDL Scripts, Normalization (database.py)'],
+        [MEMBER_2_NAME, MEMBER_2_ROLL, 'DML Data Seeding, Anonymization Security Rules, SQL Queries (seed_db.py, anonymization.py)'],
+        [MEMBER_3_NAME, MEMBER_3_ROLL, 'Streamlit Frontend, Role-Based Views, Triggers/Procedures UI Auth (app.py, views/)'],
     ],
     col_widths=[1.8, 1.4, 4.0]
 )
